@@ -1,0 +1,36 @@
+<section class="wrap">
+  <div class="panel">
+    @if (loading()) {
+      <div class="loading-state">Cargando…</div>
+    } @else if (!invite()) {
+      <h1>Enlace no válido</h1>
+      <p class="muted">Este enlace de invitación no existe o fue reemplazado. Pide uno nuevo al administrador.</p>
+      <a routerLink="/user">Volver a los bootcamps</a>
+    } @else if (!done()) {
+      @if (invite(); as inv) {
+        <div class="head">
+          <span class="eyebrow">INVITACIÓN · {{ inv.role }}</span>
+          <h1>{{ inv.bootcampName }}</h1>
+          <span class="muted">{{ inv.range }} · {{ inv.quotaText }}</span>
+        </div>
+        <label class="field">
+          Nombre completo
+          <input [ngModel]="name()" (ngModelChange)="name.set($event)" />
+        </label>
+        <label class="field">
+          Correo
+          <input type="email" [ngModel]="email()" (ngModelChange)="email.set($event)" />
+        </label>
+        <span class="error">{{ error() }}</span>
+        <button class="btn-new" type="button" (click)="accept()">Aceptar invitación</button>
+      }
+    } @else {
+      @if (invite(); as inv) {
+        <span class="confirmed">INSCRIPCIÓN CONFIRMADA</span>
+        <h1>Te uniste a {{ inv.bootcampName }}</h1>
+        <p class="muted">Tu rol es {{ inv.roleLower }}. La iteración inicia el {{ inv.start }}.</p>
+        <a routerLink="/admin/iterations">Ver iteración en administración →</a>
+      }
+    }
+  </div>
+</section>
