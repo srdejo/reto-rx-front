@@ -1,0 +1,56 @@
+.public-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.public-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 22px clamp(20px, 5vw, 64px);
+  border-bottom: 1px solid var(--border);
+  gap: 16px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+}
+
+.logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  background: var(--primary);
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+}
+
+.brand-name {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.public-nav {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.public-nav a {
+  color: var(--ink);
+}
+
+.admin-link {
+  border: 1px solid var(--ink);
+  padding: 8px 14px;
+  border-radius: 8px;
+}

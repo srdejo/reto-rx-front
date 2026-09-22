@@ -1,0 +1,11 @@
+@if (open()) {
+  <div class="backdrop" (click)="cancel.emit()"></div>
+  <div class="modal">
+    <h2>{{ title() }}</h2>
+    <ng-content></ng-content>
+    <div class="actions">
+      <button class="btn-ghost" type="button" (click)="cancel.emit()">Cancelar</button>
+      <button class="btn-danger" type="button" (click)="confirm.emit()">{{ confirmLabel() }}</button>
+    </div>
+  </div>
+}

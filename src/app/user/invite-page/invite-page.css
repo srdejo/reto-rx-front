@@ -1,0 +1,84 @@
+:host {
+  display: contents;
+}
+
+.wrap {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 56px 20px;
+}
+
+.panel {
+  width: 100%;
+  max-width: 460px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.panel h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.head h1 {
+  font-size: 30px;
+  letter-spacing: -0.02em;
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--primary-hover);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.field input {
+  padding: 11px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+}
+
+.field input:focus {
+  border-color: var(--primary);
+}
+
+.error {
+  color: var(--danger);
+  font-size: 13px;
+  min-height: 16px;
+}
+
+.confirmed {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--success);
+}

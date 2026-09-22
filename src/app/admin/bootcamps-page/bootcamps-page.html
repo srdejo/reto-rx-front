@@ -1,0 +1,213 @@
+<header class="page-header">
+  <div class="page-header-text">
+    <h1>Bootcamps</h1>
+    <p>Estructura oficial de cada bootcamp: entre 1 y 4 capacidades, fecha de lanzamiento y duración.</p>
+  </div>
+  <button class="btn-new" type="button" (click)="openDrawer()">+ Nuevo bootcamp</button>
+</header>
+
+<div class="toolbar">
+  <input class="search-input" placeholder="Buscar en esta página…" [ngModel]="q()" (ngModelChange)="q.set($event)" />
+  <div class="sort-row">
+    <span class="sort-label">Ordenar por</span>
+    <div class="sort-group">
+      <button class="sort-btn" [class.on]="sortKey() === 'name'" type="button" (click)="setSort('name')">Nombre</button>
+      <button class="sort-btn" [class.on]="sortKey() === 'capacityCount'" type="button" (click)="setSort('capacityCount')">Nº capacidades</button>
+    </div>
+    <button class="dir-btn" type="button" (click)="toggleDir()">
+      {{ sortDir() === 'asc' ? '↑ Ascendente' : '↓ Descendente' }}
+    </button>
+  </div>
+</div>
+
+@if (apiError()) {
+  <div class="error-banner">{{ apiError() }}</div>
+}
+
+@if (loading()) {
+  <div class="loading-state">Cargando…</div>
+} @else {
+  <div class="card-grid">
+    @for (b of rows(); track b.id) {
+      <article class="boot-card">
+        <div class="boot-card-head">
+          <div>
+            <h3>{{ b.name }}</h3>
+            <span class="desc">{{ b.description }}</span>
+          </div>
+          <span class="boot-card-id">#{{ b.id }}</span>
+        </div>
+        <div class="boot-stats">
+          <div class="boot-stat"><span>Lanzamiento</span><span>{{ b.releaseDateText }}</span></div>
+          <div class="boot-stat"><span>Duración</span><span>{{ b.durationText }}</span></div>
+          <div class="boot-stat"><span>Inscritos</span><span>{{ b.enrolledCount }}</span></div>
+        </div>
+        <div class="boot-card-chips">
+          @for (c of b.chips; track c) {
+            <span class="chip-accent">{{ c }}</span>
+          }
+        </div>
+        <div class="boot-card-actions">
+          <button class="btn-outline" type="button" (click)="openView(b.id)">Ver detalle</button>
+          <button class="btn-danger-outline" type="button" (click)="askDelete(b.id)">Eliminar</button>
+        </div>
+      </article>
+    }
+  </div>
+  @if (!rows().length) {
+    <div class="empty-state">Sin resultados.</div>
+  }
+  <div class="pager">
+    <div class="pager-sizes">
+      <span>Por página</span>
+      @for (s of sizes; track s) {
+        <button class="pager-size-btn" [class.on]="size() === s" type="button" (click)="setSize(s)">{{ s }}</button>
+      }
+    </div>
+    <div class="pager-nav">
+      <span>{{ pageInfo() }}</span>
+      <button class="pager-btn" type="button" [disabled]="currentPage() === 0" (click)="setPage(-1)">← Anterior</button>
+      <button class="pager-btn" type="button" [disabled]="currentPage() >= totalPages() - 1" (click)="setPage(1)">Siguiente →</button>
+    </div>
+  </div>
+}
+
+<app-drawer
+  [open]="drawerOpen()"
+  [title]="viewId() != null ? 'Detalle del bootcamp' : 'Nuevo bootcamp'"
+  [showFooter]="viewId() == null"
+  submitLabel="Guardar"
+  (close)="closeDrawer()"
+  (submit)="submit()"
+>
+  @if (viewId() != null) {
+    @if (viewing(); as v) {
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <h3 style="margin:0;font-weight:700;font-size:24px">{{ v.name }}</h3>
+        <span style="font-size:14px;color:var(--muted)">{{ v.description }}</span>
+        <span style="font-size:13px;color:var(--muted)">{{ v.range }} · {{ v.duration }}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px">
+        @for (st of v.stats; track st.label) {
+          <div style="background:var(--bg);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;gap:2px">
+            <span style="font-weight:700;font-size:22px">{{ st.value }}</span>
+            <span style="font-size:12px;color:var(--muted)">{{ st.label }}</span>
+          </div>
+        }
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <span style="font-size:13px;font-weight:600">Capacidades y tecnologías</span>
+        @for (c of v.caps; track c.id) {
+          <div style="border:1px solid var(--border);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;justify-content:space-between;font-size:14px">
+              <span style="font-weight:600">{{ c.name }}</span>
+              <span style="font-size:11px;color:var(--muted-2)">id {{ c.id }}</span>
+            </div>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              @for (t of c.techs; track t.id) {
+                <span class="chip">{{ t.name }} <span style="color:var(--muted-2);font-size:10px">#{{ t.id }}</span></span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <span style="font-size:13px;font-weight:600">Personas inscritas</span>
+        @for (p of v.people; track p.email) {
+          <div style="display:flex;justify-content:space-between;gap:12px;font-size:13px;padding:8px 0;border-bottom:1px solid #eeebf5">
+            <span style="font-weight:500">{{ p.name }}</span><span style="color:var(--muted)">{{ p.email }}</span>
+          </div>
+        }
+        @if (!v.people.length) {
+          <span style="font-size:13px;color:var(--muted)">Aún no hay personas inscritas.</span>
+        }
+      </div>
+      <button class="btn-danger-outline" style="align-self:flex-start" type="button" (click)="askDelete(v.id)">Eliminar bootcamp</button>
+    }
+  } @else {
+    <label class="field">
+      <span class="field-head">Nombre<span class="field-count">{{ name().length }}/50</span></span>
+      <input [ngModel]="name()" (ngModelChange)="name.set($event)" maxlength="50" placeholder="Ej. Talent Pool" />
+      <span class="field-error">{{ errors().name }}</span>
+    </label>
+    <label class="field">
+      <span class="field-head">Descripción<span class="field-count">{{ description().length }}/90</span></span>
+      <textarea [ngModel]="description()" (ngModelChange)="description.set($event)" maxlength="90" rows="2"></textarea>
+      <span class="field-error">{{ errors().description }}</span>
+    </label>
+    <div class="field-row">
+      <label class="field">
+        Fecha de lanzamiento
+        <input type="date" [ngModel]="releaseDate()" (ngModelChange)="releaseDate.set($event)" />
+        <span class="field-error">{{ errors().releaseDate }}</span>
+      </label>
+      <label class="field">
+        Duración (días)
+        <input type="number" min="1" [ngModel]="durationDays()" (ngModelChange)="durationDays.set($event)" placeholder="45" />
+        <span class="field-error">{{ errors().durationDays }}</span>
+      </label>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <div style="display:flex;justify-content:space-between;font-size:13px">
+        <span style="font-weight:600">Capacidades</span>
+        <span style="color:var(--muted)">{{ pickCount() }}</span>
+      </div>
+      <input
+        class="search-input"
+        style="max-width:none"
+        placeholder="Filtrar capacidades…"
+        [ngModel]="pickQ()"
+        (ngModelChange)="pickQ.set($event)"
+      />
+      <div style="display:flex;flex-direction:column;gap:6px">
+        @for (p of capPick(); track p.id) {
+          <button class="pick-row" [class.on]="p.on" type="button" (click)="toggleCap(p.id)">
+            <span style="font-size:14px;font-weight:500">{{ p.name }}</span>
+            <span style="font-size:12px;color:var(--muted)">{{ p.sub }}</span>
+          </button>
+        }
+      </div>
+      <span class="field-error">{{ errors().ids }}</span>
+    </div>
+    @if (formError()) {
+      <div class="error-banner">{{ formError() }}</div>
+    }
+  }
+</app-drawer>
+
+<app-confirm-dialog [open]="delId() != null" [title]="'¿Eliminar ' + (deletePlan()?.name ?? '') + '?'" (cancel)="cancelDelete()" (confirm)="confirmDelete()">
+  @if (deletePlan(); as p) {
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;font-weight:600;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em">Capacidades a eliminar</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        @for (c of p.capDel; track c.id) {
+          <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--danger-bg);color:#9b2c1f">{{ c.name }}</span>
+        }
+        @if (!p.capDel.length) {
+          <span style="font-size:13px;color:var(--muted)">Ninguna</span>
+        }
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <span style="font-size:12px;font-weight:600;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em">Tecnologías a eliminar</span>
+      <div style="display:flex;flex-wrap:wrap;gap:6px">
+        @for (t of p.techDel; track t.id) {
+          <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--danger-bg);color:#9b2c1f">{{ t.name }}</span>
+        }
+        @if (!p.techDel.length) {
+          <span style="font-size:13px;color:var(--muted)">Ninguna</span>
+        }
+      </div>
+    </div>
+    @if (p.keepList.length) {
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:12px;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:0.06em">Se conservan (usadas por otros bootcamps)</span>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          @for (k of p.keepList; track k.id) {
+            <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--success-bg);color:#23603f">{{ k.name }}</span>
+          }
+        </div>
+      </div>
+    }
+  }
+</app-confirm-dialog>

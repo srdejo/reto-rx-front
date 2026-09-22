@@ -1,0 +1,47 @@
+<section class="hero">
+  <h1>Bootcamps</h1>
+</section>
+
+<section class="catalog">
+  <div class="catalog-head">
+    <span></span>
+    <span class="count">{{ countText() }}</span>
+  </div>
+
+  @if (apiError()) {
+    <div class="error-banner">{{ apiError() }}</div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">Cargando…</div>
+  } @else {
+    <div class="grid">
+      @for (c of bootCards(); track c.bootcamp.id) {
+        <div class="card">
+          <div class="card-meta">
+            <span>{{ c.releaseDateText }}</span>
+            <span>{{ c.durationText }}</span>
+          </div>
+          <div class="card-title">
+            <a [routerLink]="['/user/bootcamp', c.bootcamp.id]"><h3>{{ c.bootcamp.name }}</h3></a>
+            <p>{{ c.bootcamp.description }}</p>
+          </div>
+          <div class="card-chips">
+            @for (cap of c.bootcamp.capacities; track cap.id) {
+              <span class="chip-accent">{{ cap.name }}</span>
+            }
+          </div>
+          <div class="card-foot">
+            <a [routerLink]="['/user/bootcamp', c.bootcamp.id]" class="detail-link">Ver detalle →</a>
+            <button class="btn-new" type="button" (click)="openEnroll(c.bootcamp)">Inscribirme</button>
+          </div>
+        </div>
+      }
+    </div>
+    @if (!bootCards().length) {
+      <div class="empty-state">Sin resultados.</div>
+    }
+  }
+</section>
+
+<app-enroll-modal [bootcamp]="enrollTarget()" (closed)="closeEnroll()"></app-enroll-modal>

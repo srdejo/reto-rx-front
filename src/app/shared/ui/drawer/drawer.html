@@ -1,0 +1,18 @@
+@if (open()) {
+  <div class="backdrop" (click)="onBackdropClick()"></div>
+  <aside class="drawer">
+    <div class="drawer-head">
+      <h2>{{ title() }}</h2>
+      <button class="close-btn" type="button" (click)="close.emit()">×</button>
+    </div>
+    <div class="drawer-body">
+      <ng-content></ng-content>
+    </div>
+    @if (showFooter()) {
+      <div class="drawer-foot">
+        <button class="btn-ghost" type="button" (click)="close.emit()">Cancelar</button>
+        <button class="btn-primary" type="button" (click)="submit.emit()">{{ submitLabel() }}</button>
+      </div>
+    }
+  </aside>
+}
