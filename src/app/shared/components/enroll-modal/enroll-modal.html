@@ -6,27 +6,18 @@
         <h2>{{ b.name }}</h2>
         <span class="range">{{ range() }}</span>
       </div>
-      <label class="field">
-        Nombre completo
-        <input [ngModel]="name()" (ngModelChange)="name.set($event)" />
-      </label>
-      <label class="field">
-        Correo
-        <input type="email" placeholder="tu@correo.com" [ngModel]="email()" (ngModelChange)="email.set($event)" />
-      </label>
-      <label class="field">
-        Fecha de nacimiento
-        <input type="date" [max]="todayIso" [ngModel]="birthDate()" (ngModelChange)="birthDate.set($event)" />
-      </label>
+      <p class="range">¿Confirmas tu inscripción en este bootcamp?</p>
       <span class="error">{{ error() }}</span>
       <div class="actions">
         <button class="btn-ghost" type="button" (click)="close()">Cancelar</button>
-        <button class="btn-primary" type="button" (click)="submit()">Confirmar inscripción</button>
+        <button class="btn-primary" type="button" [disabled]="submitting()" (click)="submit()">
+          {{ submitting() ? 'Inscribiendo…' : 'Confirmar inscripción' }}
+        </button>
       </div>
     } @else {
       <span class="confirmed">INSCRIPCIÓN CONFIRMADA</span>
       <h2>Te inscribiste en {{ b.name }}</h2>
-      <p class="range">{{ range() }} · {{ activeCount() }}</p>
+      <p class="range">{{ range() }}</p>
       <button class="btn-dark" type="button" (click)="close()">Listo</button>
     }
   </div>

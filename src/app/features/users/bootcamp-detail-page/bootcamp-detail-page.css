@@ -166,3 +166,14 @@
   font-size: 14px;
   color: #9a9ca3;
 }
+
+.enrolled-badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--success);
+  padding: 8px 14px;
+  border: 1px solid var(--success);
+  border-radius: 8px;
+}

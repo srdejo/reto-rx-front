@@ -4,7 +4,6 @@
       <div class="logo">O</div>
       <div class="brand-text">
         <span class="brand-name">On-Class</span>
-        <span class="brand-sub">Administración</span>
       </div>
     </div>
     <nav class="nav">
@@ -15,6 +14,9 @@
         </a>
       }
     </nav>
+    <div class="sidebar-foot">
+      <button type="button" class="site-link logout-btn" (click)="logout()">Cerrar sesión</button>
+    </div>
   </aside>
   <main class="content">
     <router-outlet></router-outlet>

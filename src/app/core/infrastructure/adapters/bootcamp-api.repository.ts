@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../environments/environment';
 import { PagedResponse, PagedResult } from '@core/domain/models/shared.types';
-import { Bootcamp, CreateBootcampInput } from '@core/domain/models/bootcamp.model';
+import { Bootcamp, BootcampDetail, CreateBootcampInput } from '@core/domain/models/bootcamp.model';
 import { BootcampRepository, GetBootcampsPageParams } from '@core/domain/ports/bootcamp.repository';
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +32,19 @@ export class BootcampApiRepository extends BootcampRepository {
       this.http.get<PagedResponse<Bootcamp>>(`${this.baseUrl}?page=0&size=1000&sortBy=name&direction=asc`)
     );
     return data.content.map((b) => ({ ...b, capacities: b.capacities ?? [] }));
+  }
+
+  override async getById(id: number): Promise<BootcampDetail | null> {
+    try {
+      const b = await firstValueFrom(this.http.get<BootcampDetail>(`${this.baseUrl}${id}`));
+      return {
+        ...b,
+        capacities: (b.capacities ?? []).map((c) => ({ ...c, technologies: c.technologies ?? [] }))
+      };
+    } catch (err) {
+      if (err instanceof HttpErrorResponse && err.status === 404) return null;
+      throw err;
+    }
   }
 
   override async create(input: CreateBootcampInput): Promise<void> {
