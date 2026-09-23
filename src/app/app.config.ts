@@ -1,5 +1,5 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -9,15 +9,16 @@ import { CapacityRepository } from '@core/domain/ports/capacity.repository';
 import { CapacityApiRepository } from '@core/infrastructure/adapters/capacity-api.repository';
 import { BootcampRepository } from '@core/domain/ports/bootcamp.repository';
 import { BootcampApiRepository } from '@core/infrastructure/adapters/bootcamp-api.repository';
-import { IterationRepository } from '@core/domain/ports/iteration.repository';
-import { InMemoryIterationRepository } from '@core/infrastructure/adapters/in-memory-iteration.repository';
 import { EnrollmentRepository } from '@core/domain/ports/enrollment.repository';
-import { InMemoryEnrollmentRepository } from '@core/infrastructure/adapters/in-memory-enrollment.repository';
+import { EnrollmentApiRepository } from '@core/infrastructure/adapters/enrollment-api.repository';
+import { AuthRepository } from '@core/domain/ports/auth.repository';
+import { AuthApiRepository } from '@core/infrastructure/adapters/auth-api.repository';
+import { authInterceptor } from '@core/infrastructure/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
     // Hexagonal wiring: bind each feature's port (abstract repository) to
     // its concrete adapter. Swapping an adapter (e.g. for tests or a future
@@ -25,7 +26,7 @@ export const appConfig: ApplicationConfig = {
     { provide: TechnologyRepository, useClass: TechnologyApiRepository },
     { provide: CapacityRepository, useClass: CapacityApiRepository },
     { provide: BootcampRepository, useClass: BootcampApiRepository },
-    { provide: IterationRepository, useClass: InMemoryIterationRepository },
-    { provide: EnrollmentRepository, useClass: InMemoryEnrollmentRepository }
+    { provide: EnrollmentRepository, useClass: EnrollmentApiRepository },
+    { provide: AuthRepository, useClass: AuthApiRepository }
   ]
 };

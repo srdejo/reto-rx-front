@@ -3,7 +3,7 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { GetTechnologiesUseCase } from '@core/application/use-cases/get-technologies.use-case';
 import { GetCapacitiesUseCase } from '@core/application/use-cases/get-capacities.use-case';
 import { GetBootcampsUseCase } from '@core/application/use-cases/get-bootcamps.use-case';
-import { GetIterationsUseCase } from '@core/application/use-cases/get-iterations.use-case';
+import { AuthService } from '@core/application/use-cases/auth.service';
 import { Toast } from '@shared/components/toast/toast';
 
 @Component({
@@ -16,7 +16,7 @@ export class AdminShell {
   private readonly getTechnologies = inject(GetTechnologiesUseCase);
   private readonly getCapacities = inject(GetCapacitiesUseCase);
   private readonly getBootcamps = inject(GetBootcampsUseCase);
-  private readonly iterations = inject(GetIterationsUseCase).execute();
+  private readonly authService = inject(AuthService);
 
   protected readonly nav = [
     { label: 'Tecnologías', href: 'technologies' },
@@ -27,7 +27,6 @@ export class AdminShell {
   private readonly technologyCount = signal(0);
   private readonly capacityCount = signal(0);
   private readonly bootcampCount = signal(0);
-  protected readonly iterationCount = computed(() => this.iterations().length);
 
   constructor() {
     this.getTechnologies.execute().then((t) => this.technologyCount.set(t.length));
@@ -43,10 +42,12 @@ export class AdminShell {
         return this.capacityCount();
       case 'bootcamps':
         return this.bootcampCount();
-      case 'iterations':
-        return this.iterationCount();
       default:
         return 0;
     }
+  }
+
+  logout(): void {
+    this.authService.logout();
   }
 }

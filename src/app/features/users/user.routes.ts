@@ -14,10 +14,6 @@ export const USER_ROUTES: Routes = [
         path: 'bootcamp/:id',
         loadComponent: () =>
           import('./bootcamp-detail-page/bootcamp-detail-page').then((m) => m.BootcampDetailPage)
-      },
-      {
-        path: 'invite/:token',
-        loadComponent: () => import('./invite-page/invite-page').then((m) => m.InvitePage)
       }
     ]
   }

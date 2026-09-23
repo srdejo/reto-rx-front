@@ -54,3 +54,15 @@
   padding: 8px 14px;
   border-radius: 8px;
 }
+
+.logout-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: var(--ink);
+}
+
+.logout-link:hover {
+  color: var(--primary);
+}

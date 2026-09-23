@@ -1,5 +1,10 @@
 @if (loading()) {
   <div class="loading-state">Cargando…</div>
+} @else if (loadError()) {
+  <section class="notfound">
+    <div class="error-banner">{{ loadError() }}</div>
+    <a routerLink="/user">Volver a los bootcamps</a>
+  </section>
 } @else if (notFound()) {
   <section class="notfound">
     <h1>No encontramos esta página.</h1>
@@ -15,29 +20,43 @@
         <div class="stat"><span>Lanzamiento</span><span>{{ d.releaseDateText }}</span></div>
         <div class="stat"><span>Duración</span><span>{{ d.durationText }}</span></div>
         <div class="stat"><span>Capacidades</span><span>{{ d.bootcamp.capacities.length }}</span></div>
-        <div class="stat"><span>Comunidad</span><span>{{ d.enrolledText }}</span></div>
+        <div class="stat"><span>Tecnologías</span><span>{{ d.technologyCount }}</span></div>
       </div>
-      <button class="btn-new hero-cta" type="button" (click)="openEnroll()">Inscribirme en este bootcamp</button>
+      @if (isEnrolled()) {
+        <span class="enrolled-badge hero-cta">Ya estás inscrito en este bootcamp</span>
+      } @else {
+        <button class="btn-new hero-cta" type="button" (click)="openEnroll()">Inscribirme en este bootcamp</button>
+      }
     </div>
     <div class="content-grid">
       <div class="learn">
         <h2>Qué vas a aprender</h2>
-        @for (c of d.capBlocks; track c.name) {
+        @for (c of d.bootcamp.capacities; track c.id) {
           <div class="learn-block">
             <div class="learn-head">
               <span class="learn-name">{{ c.name }}</span>
-              <span class="learn-desc">{{ c.description }}</span>
+              @if (c.description) {
+                <span class="learn-desc">{{ c.description }}</span>
+              }
             </div>
             <div class="learn-techs">
-              @for (t of c.techs; track t.id) {
+              @for (t of c.technologies; track t.id) {
                 <span class="tech-pill">{{ t.name }}</span>
+              } @empty {
+                <span class="learn-desc">Sin tecnologías asociadas.</span>
               }
             </div>
           </div>
+        } @empty {
+          <p class="learn-desc">Este bootcamp aún no tiene capacidades asociadas.</p>
         }
       </div>
     </div>
   </section>
 }
 
-<app-enroll-modal [bootcamp]="enrollTarget()" (closed)="closeEnroll()"></app-enroll-modal>
+<app-enroll-modal
+  [bootcamp]="enrollTarget()"
+  (enrolled)="markEnrolled($event)"
+  (closed)="closeEnroll()"
+></app-enroll-modal>

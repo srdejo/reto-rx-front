@@ -33,7 +33,11 @@
           </div>
           <div class="card-foot">
             <a [routerLink]="['/user/bootcamp', c.bootcamp.id]" class="detail-link">Ver detalle →</a>
-            <button class="btn-new" type="button" (click)="openEnroll(c.bootcamp)">Inscribirme</button>
+            @if (c.enrolled) {
+              <span class="enrolled-badge">Inscrito</span>
+            } @else {
+              <button class="btn-new" type="button" (click)="openEnroll(c.bootcamp)">Inscribirme</button>
+            }
           </div>
         </div>
       }
@@ -44,4 +48,8 @@
   }
 </section>
 
-<app-enroll-modal [bootcamp]="enrollTarget()" (closed)="closeEnroll()"></app-enroll-modal>
+<app-enroll-modal
+  [bootcamp]="enrollTarget()"
+  (enrolled)="markEnrolled($event)"
+  (closed)="closeEnroll()"
+></app-enroll-modal>

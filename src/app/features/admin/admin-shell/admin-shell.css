@@ -104,6 +104,19 @@
   align-items: center;
 }
 
+.logout-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  padding: 0;
+  text-align: left;
+}
+
+.logout-btn:hover {
+  color: #b597f0;
+}
+
 .content {
   padding: 40px 48px 64px;
   min-width: 0;

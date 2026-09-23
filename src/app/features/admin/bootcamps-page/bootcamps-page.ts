@@ -9,6 +9,7 @@ import { GetEnrollmentsUseCase } from '@core/application/use-cases/get-enrollmen
 import { RemoveBootcampScheduleUseCase } from '@core/application/use-cases/remove-bootcamp-schedule.use-case';
 import { Bootcamp, BootcampSortKey } from '@core/domain/models/bootcamp.model';
 import { Capacity } from '@core/domain/models/capacity.model';
+import { Enrollment } from '@core/domain/models/enrollment.model';
 import { Ref, SortDirection } from '@core/domain/models/shared.types';
 import { ToastService } from '@shared/components/toast/toast.service';
 import { Drawer } from '@shared/components/drawer/drawer';
@@ -50,6 +51,7 @@ export class BootcampsPage {
   protected readonly bootcamps = signal<Bootcamp[]>([]);
   protected readonly allBootcamps = signal<Bootcamp[]>([]);
   protected readonly allCapacities = signal<Capacity[]>([]);
+  protected readonly enrollments = signal<Enrollment[]>([]);
   protected readonly sortKey = signal<BootcampSortKey>('name');
   protected readonly sortDir = signal<SortDirection>('asc');
   protected readonly size = signal(10);
@@ -65,9 +67,16 @@ export class BootcampsPage {
   }
 
   private async refreshLookups(): Promise<void> {
-    const [all, caps] = await Promise.all([this.getAllBootcamps.execute(), this.getAllCapacities.execute()]);
-    this.allBootcamps.set(all);
-    this.allCapacities.set(caps);
+    // Fetched independently: the enrollments backend isn't wired up yet, and
+    // a failure there shouldn't take down the bootcamps/capacities lookups.
+    const [allResult, capsResult, enrollmentsResult] = await Promise.allSettled([
+      this.getAllBootcamps.execute(),
+      this.getAllCapacities.execute(),
+      this.getEnrollments.list()
+    ]);
+    if (allResult.status === 'fulfilled') this.allBootcamps.set(allResult.value);
+    if (capsResult.status === 'fulfilled') this.allCapacities.set(capsResult.value);
+    this.enrollments.set(enrollmentsResult.status === 'fulfilled' ? enrollmentsResult.value : []);
   }
 
   private async load(params?: { page?: number; size?: number; sortBy?: BootcampSortKey; direction?: SortDirection }): Promise<void> {
@@ -113,7 +122,7 @@ export class BootcampsPage {
         description: b.description || 'Sin descripción',
         releaseDateText: fmt(b.releaseDate),
         durationText: `${b.durationDays} días`,
-        enrolledCount: this.getEnrollments.enrolledIn(b.id).length,
+        enrolledCount: this.enrollments().filter((e) => e.bootcampId === b.id).length,
         chips: b.capacities.map((c) => `${c.name} · ${this.fullCap(c.id).technologies.length}`)
       }));
   });
@@ -140,7 +149,7 @@ export class BootcampsPage {
     const vb = this.allBootcamps().find((b) => b.id === this.viewId());
     if (!vb) return null;
     const techs = this.techsOf(vb.capacities);
-    const people = this.getEnrollments.enrolledIn(vb.id);
+    const people = this.enrollments().filter((e) => e.bootcampId === vb.id);
     return {
       id: vb.id,
       name: vb.name,
@@ -222,7 +231,7 @@ export class BootcampsPage {
       this.toast.show(result.message);
       return;
     }
-    this.removeBootcampSchedule.execute(id);
+    await this.removeBootcampSchedule.execute(id);
     this.drawerOpen.set(false);
     this.viewId.set(null);
     this.toast.show(`Bootcamp "${name}" eliminado`);

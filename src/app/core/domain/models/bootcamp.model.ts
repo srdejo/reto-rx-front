@@ -10,6 +10,16 @@ export interface Bootcamp {
   capacities: Ref[];
 }
 
+export interface BootcampCapacity extends Ref {
+  description?: string;
+  technologies: Ref[];
+}
+
+/** A single bootcamp as returned by GET /bootcamps/{id}: capacities come with their technologies. */
+export interface BootcampDetail extends Bootcamp {
+  capacities: BootcampCapacity[];
+}
+
 export type BootcampSortKey = 'name' | 'capacityCount';
 
 export interface CreateBootcampInput {
