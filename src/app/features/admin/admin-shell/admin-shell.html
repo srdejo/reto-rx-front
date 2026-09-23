@@ -15,7 +15,16 @@
       }
     </nav>
     <div class="sidebar-foot">
-      <button type="button" class="site-link logout-btn" (click)="logout()">Cerrar sesión</button>
+      <div class="user">
+        <div class="avatar">AD</div>
+        <div class="user-text">
+          <span class="user-name">Administrador</span>
+          @if (email()) {
+            <span class="user-email">{{ email() }}</span>
+          }
+        </div>
+      </div>
+      <button type="button" class="logout-btn" (click)="logout()">Cerrar sesión</button>
     </div>
   </aside>
   <main class="content">

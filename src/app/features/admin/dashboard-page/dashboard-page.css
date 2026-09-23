@@ -1,0 +1,334 @@
+:host {
+  display: block;
+  max-width: 1440px;
+}
+
+.dash {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+/* Header */
+.dash-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.dash-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dash-title h1 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 34px;
+  letter-spacing: -0.02em;
+}
+
+.dash-title p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.dash-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.updated,
+.muted-sm {
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.muted-md {
+  font-size: 13px;
+  color: var(--muted-2);
+}
+
+.btn-refresh,
+.btn-view {
+  border: 1px solid var(--border-strong);
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-refresh {
+  padding: 9px 14px;
+}
+
+.btn-refresh:hover:not(:disabled),
+.btn-view:hover {
+  border-color: var(--ink);
+}
+
+.btn-refresh:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+/* KPI strip: one card, cells split by thin dividers */
+.kpi-strip {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  overflow: hidden;
+}
+
+.kpi {
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-left: 1px solid #eeebf5;
+  margin-left: -1px;
+}
+
+.kpi-label {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.kpi-value {
+  font-weight: 700;
+  font-size: 32px;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+/* Ranking */
+.panel {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.ranking {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rank-row {
+  display: grid;
+  grid-template-columns: 24px minmax(120px, 200px) minmax(0, 1fr) 40px;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 8px;
+  margin: 0 -8px;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.rank-row:hover {
+  background: var(--bg);
+}
+
+.rank-pos {
+  font-size: 12px;
+  color: var(--muted-2);
+}
+
+.rank-name {
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rank-track {
+  display: block;
+  height: 8px;
+  background: #eeebf5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.rank-fill {
+  display: block;
+  height: 100%;
+  background: var(--primary);
+  border-radius: 999px;
+}
+
+.rank-value {
+  font-weight: 600;
+  text-align: right;
+}
+
+/* Report cards */
+.reports {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.reports-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.reports-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.reports-title h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.report-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  transition: border-color 0.15s;
+}
+
+.report-card:hover {
+  border-color: #b597f0;
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.card-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.card-title h3 {
+  margin: 0;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.card-id {
+  font-size: 11px;
+  color: var(--muted-2);
+  background: var(--bg);
+  padding: 3px 7px;
+  border-radius: 6px;
+}
+
+.card-field {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.card-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.field-label {
+  color: var(--muted-2);
+}
+
+.field-value {
+  font-weight: 600;
+  font-size: 13px;
+}
+
+.card-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  border-top: 1px solid #eeebf5;
+  padding-top: 14px;
+}
+
+.btn-view {
+  margin-top: auto;
+  padding: 9px 12px;
+}
+
+.empty-box {
+  background: #fff;
+  border: 1px dashed var(--border-strong);
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+@media (max-width: 640px) {
+  .rank-row {
+    grid-template-columns: 20px minmax(0, 1fr) 32px;
+  }
+
+  .rank-track {
+    grid-column: 2 / 4;
+    grid-row: 2;
+  }
+}

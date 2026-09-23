@@ -28,6 +28,7 @@ export class RegisterPage {
   }
 
   async submit(): Promise<void> {
+    if (this.loading()) return;
     this.error.set('');
     this.loading.set(true);
     try {

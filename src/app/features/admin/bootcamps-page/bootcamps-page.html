@@ -77,6 +77,7 @@
   [title]="viewId() != null ? 'Detalle del bootcamp' : 'Nuevo bootcamp'"
   [showFooter]="viewId() == null"
   submitLabel="Guardar"
+  [loading]="saving()"
   (close)="closeDrawer()"
   (submit)="submit()"
 >
@@ -175,7 +176,7 @@
   }
 </app-drawer>
 
-<app-confirm-dialog [open]="delId() != null" [title]="'¿Eliminar ' + delName() + '?'" (cancel)="cancelDelete()" (confirm)="confirmDelete()">
+<app-confirm-dialog [open]="delId() != null" [title]="'¿Eliminar ' + delName() + '?'" [loading]="deleting()" (cancel)="cancelDelete()" (confirm)="confirmDelete()">
   <span style="font-size:13px;color:var(--muted)">
     Se eliminarán también las capacidades y tecnologías de este bootcamp que no estén siendo usadas por otros bootcamps.
   </span>

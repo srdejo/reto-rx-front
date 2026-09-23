@@ -5,5 +5,6 @@ export const environment = {
   bootApiUrl: 'http://localhost:8082/api/v1/bootcamps',
   authApiUrl: 'http://localhost:8081/api/v1/auth',
   personApiUrl: 'http://localhost:8081/api/v1',
-  enrollmentApiUrl: 'http://localhost:8082/api/v1/enrollment'
+  enrollmentApiUrl: 'http://localhost:8082/api/v1/enrollment',
+  reportApiUrl: 'http://localhost:8085/api/v1/reports/bootcamps'
 };

@@ -38,6 +38,8 @@ export class BootcampsPage {
   protected readonly drawerOpen = signal(false);
   protected readonly viewId = signal<number | null>(null);
   protected readonly submitted = signal(false);
+  protected readonly saving = signal(false);
+  protected readonly deleting = signal(false);
   protected readonly formError = signal('');
   protected readonly pickQ = signal('');
   protected readonly name = signal('');
@@ -223,41 +225,51 @@ export class BootcampsPage {
 
   async confirmDelete(): Promise<void> {
     const id = this.delId();
-    if (id == null) return;
+    if (id == null || this.deleting()) return;
     const name = this.delName();
-    const result = await this.deleteBootcamp.execute(id);
-    this.delId.set(null);
-    if (!result.ok) {
-      this.toast.show(result.message);
-      return;
+    this.deleting.set(true);
+    try {
+      const result = await this.deleteBootcamp.execute(id);
+      if (!result.ok) {
+        this.toast.show(result.message);
+        return;
+      }
+      await this.removeBootcampSchedule.execute(id);
+      this.drawerOpen.set(false);
+      this.viewId.set(null);
+      this.toast.show(`Bootcamp "${name}" eliminado`);
+      await Promise.all([this.load(), this.refreshLookups()]);
+    } finally {
+      this.delId.set(null);
+      this.deleting.set(false);
     }
-    await this.removeBootcampSchedule.execute(id);
-    this.drawerOpen.set(false);
-    this.viewId.set(null);
-    this.toast.show(`Bootcamp "${name}" eliminado`);
-    await Promise.all([this.load(), this.refreshLookups()]);
   }
 
   async submit(): Promise<void> {
-    if (this.viewId() != null) return;
+    if (this.viewId() != null || this.saving()) return;
     this.submitted.set(true);
-    const result = await this.createBootcamp.execute({
-      name: this.name(),
-      description: this.description(),
-      releaseDate: this.releaseDate(),
-      durationDays: Number(this.durationDays()),
-      capacitiesIds: this.selectedCapIds()
-    });
-    if (result.ok) {
-      this.toast.show(`Bootcamp "${this.name().trim()}" creado`);
-      this.drawerOpen.set(false);
-      await Promise.all([this.load({ page: 0 }), this.refreshLookups()]);
-      return;
+    this.saving.set(true);
+    try {
+      const result = await this.createBootcamp.execute({
+        name: this.name(),
+        description: this.description(),
+        releaseDate: this.releaseDate(),
+        durationDays: Number(this.durationDays()),
+        capacitiesIds: this.selectedCapIds()
+      });
+      if (result.ok) {
+        this.toast.show(`Bootcamp "${this.name().trim()}" creado`);
+        this.drawerOpen.set(false);
+        await Promise.all([this.load({ page: 0 }), this.refreshLookups()]);
+        return;
+      }
+      if ('errors' in result) {
+        this.errors.set(result.errors);
+        return;
+      }
+      this.formError.set(result.apiError);
+    } finally {
+      this.saving.set(false);
     }
-    if ('errors' in result) {
-      this.errors.set(result.errors);
-      return;
-    }
-    this.formError.set(result.apiError);
   }
 }

@@ -13,6 +13,8 @@ import { EnrollmentRepository } from '@core/domain/ports/enrollment.repository';
 import { EnrollmentApiRepository } from '@core/infrastructure/adapters/enrollment-api.repository';
 import { AuthRepository } from '@core/domain/ports/auth.repository';
 import { AuthApiRepository } from '@core/infrastructure/adapters/auth-api.repository';
+import { ReportRepository } from '@core/domain/ports/report.repository';
+import { ReportApiRepository } from '@core/infrastructure/adapters/report-api.repository';
 import { authInterceptor } from '@core/infrastructure/interceptors/auth.interceptor';
 
 export const appConfig: ApplicationConfig = {
@@ -27,6 +29,7 @@ export const appConfig: ApplicationConfig = {
     { provide: CapacityRepository, useClass: CapacityApiRepository },
     { provide: BootcampRepository, useClass: BootcampApiRepository },
     { provide: EnrollmentRepository, useClass: EnrollmentApiRepository },
-    { provide: AuthRepository, useClass: AuthApiRepository }
+    { provide: AuthRepository, useClass: AuthApiRepository },
+    { provide: ReportRepository, useClass: ReportApiRepository }
   ]
 };

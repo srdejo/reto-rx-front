@@ -6,7 +6,11 @@ export const ADMIN_ROUTES: Routes = [
     path: '',
     component: AdminShell,
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'technologies' },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./dashboard-page/dashboard-page').then((m) => m.DashboardPage)
+      },
       {
         path: 'technologies',
         loadComponent: () => import('./technologies-page/technologies-page').then((m) => m.TechnologiesPage)

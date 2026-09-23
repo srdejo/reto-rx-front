@@ -22,6 +22,7 @@ export class TechnologiesPage {
   protected readonly q = signal('');
   protected readonly drawerOpen = signal(false);
   protected readonly submitted = signal(false);
+  protected readonly saving = signal(false);
   protected readonly formError = signal('');
   protected readonly name = signal('');
   protected readonly description = signal('');
@@ -80,18 +81,24 @@ export class TechnologiesPage {
   }
 
   async submit(): Promise<void> {
+    if (this.saving()) return;
     this.submitted.set(true);
-    const result = await this.createTechnology.execute({ name: this.name(), description: this.description() });
-    if (result.ok) {
-      this.toast.show(`Tecnología "${this.name().trim()}" creada`);
-      this.drawerOpen.set(false);
-      await this.refresh();
-      return;
+    this.saving.set(true);
+    try {
+      const result = await this.createTechnology.execute({ name: this.name(), description: this.description() });
+      if (result.ok) {
+        this.toast.show(`Tecnología "${this.name().trim()}" creada`);
+        this.drawerOpen.set(false);
+        await this.refresh();
+        return;
+      }
+      if ('errors' in result) {
+        this.errors.set(result.errors);
+        return;
+      }
+      this.formError.set(result.apiError);
+    } finally {
+      this.saving.set(false);
     }
-    if ('errors' in result) {
-      this.errors.set(result.errors);
-      return;
-    }
-    this.formError.set(result.apiError);
   }
 }

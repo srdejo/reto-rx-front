@@ -30,12 +30,12 @@ export class AuthService {
 
   async login(credentials: Credentials): Promise<void> {
     const session = await this.authRepository.login(credentials);
-    this.storeSession(session);
+    this.storeSession({ ...session, email: credentials.email });
   }
 
   async register(data: RegisterData): Promise<void> {
     const session = await this.authRepository.register(data);
-    this.storeSession(session);
+    this.storeSession({ ...session, email: data.email });
   }
 
   private storeSession(session: AuthSession): void {

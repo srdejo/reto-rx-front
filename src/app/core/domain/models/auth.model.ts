@@ -16,4 +16,6 @@ export interface AuthSession {
   token: string;
   role: Role;
   personId: number;
+  /** Email used to sign in (the login endpoint does not return it). */
+  email?: string;
 }
