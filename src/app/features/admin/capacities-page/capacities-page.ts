@@ -26,6 +26,7 @@ export class CapacitiesPage {
 
   protected readonly drawerOpen = signal(false);
   protected readonly submitted = signal(false);
+  protected readonly saving = signal(false);
   protected readonly formError = signal('');
   protected readonly pickQ = signal('');
   protected readonly name = signal('');
@@ -134,22 +135,28 @@ export class CapacitiesPage {
   }
 
   async submit(): Promise<void> {
+    if (this.saving()) return;
     this.submitted.set(true);
-    const result = await this.createCapacity.execute({
-      name: this.name(),
-      description: this.description(),
-      technologyIds: this.selectedTechIds()
-    });
-    if (result.ok) {
-      this.toast.show(`Capacidad "${this.name().trim()}" creada`);
-      this.drawerOpen.set(false);
-      await this.load({ page: 0 });
-      return;
+    this.saving.set(true);
+    try {
+      const result = await this.createCapacity.execute({
+        name: this.name(),
+        description: this.description(),
+        technologyIds: this.selectedTechIds()
+      });
+      if (result.ok) {
+        this.toast.show(`Capacidad "${this.name().trim()}" creada`);
+        this.drawerOpen.set(false);
+        await this.load({ page: 0 });
+        return;
+      }
+      if ('errors' in result) {
+        this.errors.set(result.errors);
+        return;
+      }
+      this.formError.set(result.apiError);
+    } finally {
+      this.saving.set(false);
     }
-    if ('errors' in result) {
-      this.errors.set(result.errors);
-      return;
-    }
-    this.formError.set(result.apiError);
   }
 }

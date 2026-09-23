@@ -1,0 +1,53 @@
+@let v = view();
+<div class="head">
+  <h3>{{ v.name }}</h3>
+  <span class="desc">{{ v.description }}</span>
+  <span class="meta">{{ v.range }} · {{ v.duration }}</span>
+  <span class="meta">Actualizado: {{ v.updatedAt }}</span>
+</div>
+
+<div class="stats">
+  @for (st of v.stats; track st.label) {
+    <div class="stat">
+      <span class="stat-value">{{ st.value }}</span>
+      <span class="stat-label">{{ st.label }}</span>
+    </div>
+  }
+</div>
+
+<div class="section">
+  <span class="section-title">Capacidades y tecnologías</span>
+  @for (c of v.caps; track c.id) {
+    <div class="cap-box">
+      <div class="cap-box-head">
+        <span>{{ c.name }}</span>
+        <span class="muted-id">id {{ c.id }}</span>
+      </div>
+      <div class="cap-box-techs">
+        @for (t of c.technologies; track t.id) {
+          <span class="chip">{{ t.name }} <span class="muted-id">#{{ t.id }}</span></span>
+        }
+      </div>
+    </div>
+  }
+</div>
+
+<div class="section">
+  <span class="section-title">Personas inscritas ({{ v.people.length }})</span>
+  @if (v.people.length) {
+    <div class="table-card">
+      <table>
+        <thead>
+          <tr><th>Nombre</th><th>Correo</th></tr>
+        </thead>
+        <tbody>
+          @for (p of v.people; track p.id) {
+            <tr><td>{{ p.name }}</td><td>{{ p.email }}</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <span class="meta">Aún no hay personas inscritas.</span>
+  }
+</div>

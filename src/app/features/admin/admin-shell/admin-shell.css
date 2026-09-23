@@ -92,29 +92,65 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 0 10px;
+  gap: 12px;
+  padding: 16px 12px 0;
+  border-top: 1px solid #2e2650;
 }
 
-.site-link {
-  font-size: 13px;
-  color: #eeebf7;
+.user {
   display: flex;
-  gap: 6px;
   align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #2e2650;
+  display: grid;
+  place-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #b597f0;
+}
+
+.user-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.user-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.user-email {
+  font-size: 12px;
+  color: #9a9ca3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logout-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
+  border: 1px solid #2e2650;
+  background: transparent;
+  color: #b9bbc1;
   font: inherit;
-  padding: 0;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
   text-align: left;
 }
 
 .logout-btn:hover {
-  color: #b597f0;
+  background: #2e2650;
+  color: #ffffff;
 }
 
 .content {

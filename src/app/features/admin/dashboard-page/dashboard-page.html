@@ -1,0 +1,109 @@
+<div class="dash">
+  <header class="dash-header">
+    <div class="dash-title">
+      <h1>Dashboard</h1>
+      <p>Reporte de cada bootcamp: información, capacidades, tecnologías y personas inscritas.</p>
+    </div>
+    <div class="dash-actions">
+      <span class="updated">{{ updatedText() }}</span>
+      <button class="btn-refresh" type="button" [disabled]="loading()" (click)="refresh()">↻ Actualizar</button>
+    </div>
+  </header>
+
+  @if (apiError()) {
+    <div class="error-banner">{{ apiError() }}</div>
+  }
+
+  @if (loading() && !reports().length) {
+    <div class="loading-state">Cargando…</div>
+  } @else if (!apiError()) {
+    @if (!reports().length) {
+      <div class="empty-box">Aún no hay inscripciones reportadas.</div>
+    } @else {
+      <section class="kpi-strip">
+        @for (k of kpis(); track k.label) {
+          <div class="kpi">
+            <span class="kpi-label">{{ k.label }}</span>
+            <span class="kpi-value">{{ k.value }}</span>
+          </div>
+        }
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Bootcamps con más inscritos</h2>
+          <span class="muted-sm">Top {{ ranking().length }}</span>
+        </div>
+        <div class="ranking">
+          @for (r of ranking(); track r.id) {
+            <button class="rank-row" type="button" (click)="openView(r.id)">
+              <span class="rank-pos">{{ r.pos }}</span>
+              <span class="rank-name">{{ r.name }}</span>
+              <span class="rank-track"><span class="rank-fill" [style.width.%]="r.pct"></span></span>
+              <span class="rank-value">{{ r.value }}</span>
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="reports">
+        <div class="reports-head">
+          <div class="reports-title">
+            <h2>Reporte por bootcamp</h2>
+            <span class="muted-md">{{ countText() }}</span>
+          </div>
+          <input
+            class="search-input"
+            placeholder="Buscar bootcamp, persona o correo…"
+            [ngModel]="q()"
+            (ngModelChange)="q.set($event)"
+          />
+        </div>
+
+        <div class="report-grid">
+          @for (b of rows(); track b.id) {
+            <article class="report-card">
+              <div class="card-head">
+                <div class="card-title">
+                  <h3>{{ b.name }}</h3>
+                  <span class="card-desc">{{ b.description }}</span>
+                </div>
+                <span class="card-id">#{{ b.id }}</span>
+              </div>
+              <div class="card-field">
+                <span class="field-label">Fechas</span>
+                <span class="field-value">{{ b.range }}</span>
+              </div>
+              <div class="card-pair">
+                <div class="card-field">
+                  <span class="field-label">Duración</span>
+                  <span class="field-value">{{ b.durationText }}</span>
+                </div>
+                <div class="card-field">
+                  <span class="field-label">Inscritos</span>
+                  <span class="field-value">{{ b.enrolledCount }}</span>
+                </div>
+              </div>
+              <div class="card-chips">
+                @for (c of b.chips; track c) {
+                  <span class="chip-accent">{{ c }}</span>
+                }
+              </div>
+              <button class="btn-view" type="button" (click)="openView(b.id)">Ver reporte</button>
+            </article>
+          }
+        </div>
+
+        @if (!rows().length) {
+          <div class="empty-box">Ningún bootcamp coincide con "{{ q() }}".</div>
+        }
+      </section>
+    }
+  }
+</div>
+
+<app-drawer [open]="viewId() != null" title="Reporte del bootcamp" [showFooter]="false" (close)="closeView()">
+  @if (viewed(); as r) {
+    <app-report-detail [report]="r" />
+  }
+</app-drawer>
