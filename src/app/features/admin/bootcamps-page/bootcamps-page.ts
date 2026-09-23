@@ -4,7 +4,6 @@ import { GetBootcampsUseCase } from '@core/application/use-cases/get-bootcamps.u
 import { GetAllBootcampsUseCase } from '@core/application/use-cases/get-all-bootcamps.use-case';
 import { CreateBootcampUseCase } from '@core/application/use-cases/create-bootcamp.use-case';
 import { DeleteBootcampUseCase } from '@core/application/use-cases/delete-bootcamp.use-case';
-import { GetBootcampDeletePlanUseCase, BootcampDeletePlan } from '@core/application/use-cases/get-bootcamp-delete-plan.use-case';
 import { GetAllCapacitiesUseCase } from '@core/application/use-cases/get-all-capacities.use-case';
 import { GetEnrollmentsUseCase } from '@core/application/use-cases/get-enrollments.use-case';
 import { RemoveBootcampScheduleUseCase } from '@core/application/use-cases/remove-bootcamp-schedule.use-case';
@@ -27,7 +26,6 @@ export class BootcampsPage {
   private readonly getAllBootcamps = inject(GetAllBootcampsUseCase);
   private readonly createBootcamp = inject(CreateBootcampUseCase);
   private readonly deleteBootcamp = inject(DeleteBootcampUseCase);
-  private readonly getDeletePlan = inject(GetBootcampDeletePlanUseCase);
   private readonly getAllCapacities = inject(GetAllCapacitiesUseCase);
   private readonly getEnrollments = inject(GetEnrollmentsUseCase);
   private readonly removeBootcampSchedule = inject(RemoveBootcampScheduleUseCase);
@@ -48,7 +46,6 @@ export class BootcampsPage {
   protected readonly selectedCapIds = signal<number[]>([]);
   protected readonly delId = signal<number | null>(null);
   protected readonly errors = signal({ name: '', description: '', releaseDate: '', durationDays: '', ids: '' });
-  protected readonly deletePlan = signal<BootcampDeletePlan | null>(null);
 
   protected readonly bootcamps = signal<Bootcamp[]>([]);
   protected readonly allBootcamps = signal<Bootcamp[]>([]);
@@ -137,6 +134,8 @@ export class BootcampsPage {
 
   protected readonly pickCount = computed(() => `${this.selectedCapIds().length} seleccionadas · 1 a 4`);
 
+  protected readonly delName = computed(() => this.allBootcamps().find((b) => b.id === this.delId())?.name ?? '');
+
   protected readonly viewing = computed(() => {
     const vb = this.allBootcamps().find((b) => b.id === this.viewId());
     if (!vb) return null;
@@ -205,23 +204,20 @@ export class BootcampsPage {
     this.viewId.set(null);
   }
 
-  async askDelete(id: number): Promise<void> {
+  askDelete(id: number): void {
     this.delId.set(id);
-    this.deletePlan.set(await this.getDeletePlan.execute(id));
   }
 
   cancelDelete(): void {
     this.delId.set(null);
-    this.deletePlan.set(null);
   }
 
   async confirmDelete(): Promise<void> {
     const id = this.delId();
     if (id == null) return;
-    const plan = this.deletePlan();
+    const name = this.delName();
     const result = await this.deleteBootcamp.execute(id);
     this.delId.set(null);
-    this.deletePlan.set(null);
     if (!result.ok) {
       this.toast.show(result.message);
       return;
@@ -229,7 +225,7 @@ export class BootcampsPage {
     this.removeBootcampSchedule.execute(id);
     this.drawerOpen.set(false);
     this.viewId.set(null);
-    this.toast.show(`Bootcamp "${plan?.name}" eliminado`);
+    this.toast.show(`Bootcamp "${name}" eliminado`);
     await Promise.all([this.load(), this.refreshLookups()]);
   }
 

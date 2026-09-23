@@ -21,8 +21,7 @@ export class AdminShell {
   protected readonly nav = [
     { label: 'Tecnologías', href: 'technologies' },
     { label: 'Capacidades', href: 'capacities' },
-    { label: 'Bootcamps', href: 'bootcamps' },
-    { label: 'Iteraciones', href: 'iterations' }
+    { label: 'Bootcamps', href: 'bootcamps' }
   ];
 
   private readonly technologyCount = signal(0);

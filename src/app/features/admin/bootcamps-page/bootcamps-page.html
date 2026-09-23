@@ -175,39 +175,8 @@
   }
 </app-drawer>
 
-<app-confirm-dialog [open]="delId() != null" [title]="'¿Eliminar ' + (deletePlan()?.name ?? '') + '?'" (cancel)="cancelDelete()" (confirm)="confirmDelete()">
-  @if (deletePlan(); as p) {
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <span style="font-size:12px;font-weight:600;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em">Capacidades a eliminar</span>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        @for (c of p.capDel; track c.id) {
-          <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--danger-bg);color:#9b2c1f">{{ c.name }}</span>
-        }
-        @if (!p.capDel.length) {
-          <span style="font-size:13px;color:var(--muted)">Ninguna</span>
-        }
-      </div>
-    </div>
-    <div style="display:flex;flex-direction:column;gap:6px">
-      <span style="font-size:12px;font-weight:600;color:var(--danger);text-transform:uppercase;letter-spacing:0.06em">Tecnologías a eliminar</span>
-      <div style="display:flex;flex-wrap:wrap;gap:6px">
-        @for (t of p.techDel; track t.id) {
-          <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--danger-bg);color:#9b2c1f">{{ t.name }}</span>
-        }
-        @if (!p.techDel.length) {
-          <span style="font-size:13px;color:var(--muted)">Ninguna</span>
-        }
-      </div>
-    </div>
-    @if (p.keepList.length) {
-      <div style="display:flex;flex-direction:column;gap:6px">
-        <span style="font-size:12px;font-weight:600;color:var(--success);text-transform:uppercase;letter-spacing:0.06em">Se conservan (usadas por otros bootcamps)</span>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">
-          @for (k of p.keepList; track k.id) {
-            <span style="font-size:12px;padding:4px 9px;border-radius:999px;background:var(--success-bg);color:#23603f">{{ k.name }}</span>
-          }
-        </div>
-      </div>
-    }
-  }
+<app-confirm-dialog [open]="delId() != null" [title]="'¿Eliminar ' + delName() + '?'" (cancel)="cancelDelete()" (confirm)="confirmDelete()">
+  <span style="font-size:13px;color:var(--muted)">
+    Se eliminarán también las capacidades y tecnologías de este bootcamp que no estén siendo usadas por otros bootcamps.
+  </span>
 </app-confirm-dialog>
