@@ -9,12 +9,8 @@ import { BootcampRepository, GetBootcampsPageParams } from '@core/domain/ports/b
 @Injectable({ providedIn: 'root' })
 export class BootcampApiRepository extends BootcampRepository {
   private readonly http = inject(HttpClient);
-  // the bootcamp-api endpoints are mapped at a trailing "/"
+  
   private readonly baseUrl = `${environment.bootApiUrl.replace(/\/$/, '')}/`;
-
-  // Cache of the full catalog, used by the public listing and pickers that
-  // need every bootcamp regardless of the admin table's current page.
-  private allCache: Bootcamp[] | null = null;
 
   override async getPage(params: GetBootcampsPageParams): Promise<PagedResult<Bootcamp>> {
     const data = await firstValueFrom(
@@ -32,21 +28,17 @@ export class BootcampApiRepository extends BootcampRepository {
   }
 
   override async getAll(): Promise<Bootcamp[]> {
-    if (this.allCache) return this.allCache;
     const data = await firstValueFrom(
       this.http.get<PagedResponse<Bootcamp>>(`${this.baseUrl}?page=0&size=1000&sortBy=name&direction=asc`)
     );
-    this.allCache = data.content.map((b) => ({ ...b, capacities: b.capacities ?? [] }));
-    return this.allCache;
+    return data.content.map((b) => ({ ...b, capacities: b.capacities ?? [] }));
   }
 
   override async create(input: CreateBootcampInput): Promise<void> {
     await firstValueFrom(this.http.post(this.baseUrl, input));
-    this.allCache = null;
   }
 
   override async remove(id: number): Promise<void> {
     await firstValueFrom(this.http.delete(`${this.baseUrl}${id}`));
-    this.allCache = null;
   }
 }

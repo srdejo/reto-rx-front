@@ -36,18 +36,6 @@
           </div>
         }
       </div>
-      <div class="iters-panel">
-        <h2>Próximas iteraciones</h2>
-        @for (i of d.iters; track i.date) {
-          <div class="iter-row">
-            <span>{{ i.date }}</span>
-            <span [style.color]="i.full ? '#9a9ca3' : '#b597f0'">{{ i.seatsText }}</span>
-          </div>
-        }
-        @if (!d.iters.length) {
-          <span class="none">Aún no hay iteraciones programadas.</span>
-        }
-      </div>
     </div>
   </section>
 }

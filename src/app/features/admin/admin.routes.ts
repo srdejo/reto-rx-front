@@ -18,10 +18,6 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'bootcamps',
         loadComponent: () => import('./bootcamps-page/bootcamps-page').then((m) => m.BootcampsPage)
-      },
-      {
-        path: 'iterations',
-        loadComponent: () => import('./iterations-page/iterations-page').then((m) => m.IterationsPage)
       }
     ]
   }
